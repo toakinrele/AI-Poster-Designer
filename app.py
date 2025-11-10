@@ -5,6 +5,7 @@ DO NOT use in production or any real environment
 """
 
 from flask import Flask, request, render_template_string, redirect
+from urllib.parse import urlparse
 import sqlite3
 import os
 import pickle
@@ -103,7 +104,12 @@ def parse_xml():
 @app.route('/redirect')
 def redirect_url():
     url = request.args.get('url', '/')
-    return redirect(url)
+    url = url.replace('\\', '')
+    parsed = urlparse(url)
+    # Only allow relative redirects
+    if not parsed.netloc and not parsed.scheme:
+        return redirect(url)
+    return redirect('/')
 
 
 @app.route('/hash_password')
