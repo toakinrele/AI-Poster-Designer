@@ -63,8 +63,8 @@ def ping():
     host = request.args.get('host', 'localhost')
     if host not in allowed_hosts:
         return "Invalid host", 400
-    result = os.popen(f'ping -c 1 {host}').read()
-    return f'<pre>{result}</pre>'
+    completed = subprocess.run(["ping", "-c", "1", host], capture_output=True, text=True)
+    return f'<pre>{completed.stdout}</pre>'
 
 @app.route('/read_file')
 def read_file():
